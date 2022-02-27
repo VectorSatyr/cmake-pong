@@ -1,24 +1,11 @@
 #ifndef SDLCPP_LIBRARY_H
 #define SDLCPP_LIBRARY_H
-#include <exception>
 #include <unordered_map>
 #include <SDL.h>
 
 SDL_Texture* _cdecl SDL_CreateTextureFromFile(SDL_Renderer*, char const*);
 
 int _cdecl SDL_RenderCopy(SDL_Renderer*, SDL_Texture*, int const, int const);
-
-class clsException : public std::exception {
-private:
-	const char* message;
-
-public:
-	clsException();
-	clsException(char const*);
-	clsException& operator=(char const*);
-	virtual ~clsException() noexcept;
-	virtual char const* what() const throw();
-};
 
 class clsWindow {
 private:

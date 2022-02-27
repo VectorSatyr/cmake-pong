@@ -1,5 +1,6 @@
 #include "game.hpp"
 #include <cmath>
+#include <stdexcept>
 
 SDL_Rect const clsPong::WINDOW_RECT = { SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 320, 240 };
 
@@ -21,11 +22,16 @@ SDL_Color const clsPong::BALL_COLOR = { 0, 255, 0, 255 };
 
 char const * const clsPong::WINDOW_TITLE = "PONG!";
 
-clsPong::clsPong() : player1(PLAYER1_RECT), player2(PLAYER2_RECT), wins(0), losses(0), started(false) {
-	if (SDL_Init(SDL_INIT_VIDEO) != 0) throw clsException();
+clsPong::clsPong() : 
+	player1(PLAYER1_RECT), player2(PLAYER2_RECT), 
+	wins(0), losses(0), started(false)
+{
+	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
+		throw std::runtime_error(SDL_GetError());
+	}
 	if (std::atexit(SDL_Quit) != 0) {
 		SDL_Quit();
-		throw clsException("Unable to register SDL_Quit!");
+		throw std::runtime_error("Unable to register SDL_Quit!");
 	}
 }
 

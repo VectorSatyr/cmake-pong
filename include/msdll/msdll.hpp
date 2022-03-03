@@ -52,28 +52,11 @@ public:
 	bool is_valid() const;
 };
 
-class clsTimer {
-private:
-	unsigned int start_time, paused_time;
-	bool paused;
-
-public:
-	clsTimer();
-	void start();
-	void stop();
-	void pause();
-	unsigned int time();
-	bool is_stopped();
-};
-
 class clsEvents {
 private:
-	static const unsigned total_mouse_buttons = 5;
-	struct clsInput { bool current = false, previous = false; clsTimer duration; };
+	struct clsInput { bool current = false, previous = false; };
 	std::unordered_map <SDL_Scancode, clsInput> scancodes;
-	clsInput mouse_buttons[total_mouse_buttons];
 	SDL_Event this_event;
-	SDL_Point mouse;
 	bool quit;
 
 public:
@@ -82,14 +65,6 @@ public:
 	bool close_button() const;
 	bool key_down(SDL_Scancode const);
 	bool key_pressed(SDL_Scancode const);
-	bool key_released(SDL_Scancode const);
-	bool key_repeat(SDL_Scancode const, unsigned int const);
-	bool mouse_down(unsigned int const);
-	bool mouse_pressed(unsigned int const);
-	bool mouse_released(unsigned int const);
-	bool mouse_repeat(unsigned int const, unsigned int const);
-	int mouse_x() const;
-	int mouse_y() const;
 };
 
 #endif

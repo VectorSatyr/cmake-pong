@@ -8,7 +8,7 @@ project ("cmake-pong")
 find_package(SDL2 CONFIG REQUIRED)
 
 # Add source to this project's executable.
-add_executable (cmake-pong   "include/msdll/msdll.hpp" "src/msdll/events.cpp" "src/msdll/function.cpp" "src/msdll/renderer.cpp" "src/msdll/texture.cpp"  "src/msdll/window.cpp" "include/game.hpp" "src/ball.cpp" "src/game.cpp" "apps/app.cpp" "src/paddle.cpp" "src/rect.cpp")
+add_executable (cmake-pong   "include/msdll/msdll.hpp" "src/msdll/events.cpp" "src/msdll/function.cpp"     "include/game.hpp" "src/ball.cpp" "src/game.cpp" "apps/app.cpp" "src/paddle.cpp" "src/rect.cpp")
 
 # TODO: Add tests and install targets if needed.
 target_include_directories (cmake-pong PUBLIC ${CMAKE_SOURCE_DIR}/include)

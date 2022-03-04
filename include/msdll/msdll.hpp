@@ -1,56 +1,46 @@
 #ifndef SDLCPP_LIBRARY_H
 #define SDLCPP_LIBRARY_H
 #include <unordered_map>
+#include <memory>
 #include <SDL.h>
 
 SDL_Texture* _cdecl SDL_CreateTextureFromFile(SDL_Renderer*, char const*);
 
 int _cdecl SDL_RenderCopy(SDL_Renderer*, SDL_Texture*, int const, int const);
 
-class clsWindow {
-private:
-	SDL_Window* _window;
-	clsWindow(clsWindow const&);
+namespace sdl2
+{
+	class window_delete
+	{
+	public:
+		void operator()(SDL_Window* window) const
+		{
+			SDL_DestroyWindow(window);
+		}
+	};
 
-public:
-	clsWindow();
-	clsWindow(SDL_Window*);
-	~clsWindow();
-	clsWindow& operator=(SDL_Window*);
-	operator SDL_Window*();
-	operator SDL_Window const*() const;
-	bool is_valid() const;
-};
+	class renderer_delete
+	{
+	public:
+		void operator()(SDL_Renderer* renderer) const
+		{
+			SDL_DestroyRenderer(renderer);
+		}
+	};
 
-class clsRenderer {
-private:
-	SDL_Renderer* _renderer;
-	clsRenderer(clsRenderer const&);
+	class texture_delete
+	{
+	public:
+		void operator()(SDL_Texture* texture) const
+		{
+			SDL_DestroyTexture(texture);
+		}
+	};
 
-public:
-	clsRenderer();
-	clsRenderer(SDL_Renderer*);
-	~clsRenderer();
-	clsRenderer& operator=(SDL_Renderer*);
-	operator SDL_Renderer*();
-	operator SDL_Renderer const*() const;
-	bool is_valid() const;
-};
-
-class clsTexture {
-private:
-	SDL_Texture* _texture;
-	clsTexture(clsTexture const&);
-
-public:
-	clsTexture();
-	clsTexture(SDL_Texture*);
-	~clsTexture();
-	clsTexture& operator=(SDL_Texture*);
-	operator SDL_Texture*();
-	operator SDL_Texture*() const;
-	bool is_valid() const;
-};
+	using unique_window = std::unique_ptr<SDL_Window, window_delete>;
+	using unique_renderer = std::unique_ptr<SDL_Renderer, renderer_delete>;
+	using unique_texture = std::unique_ptr<SDL_Texture, texture_delete>;
+}
 
 class clsEvents {
 private:

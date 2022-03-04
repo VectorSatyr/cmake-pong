@@ -35,36 +35,60 @@ clsPong::clsPong() :
 	}
 }
 
-bool clsPong::init() {
+bool clsPong::init()
+{
 	// create rendering context
-	window = SDL_CreateWindow(WINDOW_TITLE, WINDOW_RECT.x, WINDOW_RECT.y, WINDOW_RECT.w, WINDOW_RECT.h, WINDOW_FLAGS);
-	if (!window.is_valid()) return false;
-	renderer = SDL_CreateRenderer(window, -1, RENDERER_FLAGS);
-	if (!renderer.is_valid()) return false;
+	window.reset(SDL_CreateWindow(
+		WINDOW_TITLE, WINDOW_RECT.x, WINDOW_RECT.y, 
+		WINDOW_RECT.w, WINDOW_RECT.h, WINDOW_FLAGS
+	));
+	if (!window) {
+		return false;
+	}
+	renderer.reset(SDL_CreateRenderer(window.get(), -1, RENDERER_FLAGS));
+	if (!renderer) {
+		return false;
+	}
 
 	// load images
-	background = SDL_CreateTextureFromFile(renderer, "images/background.bmp");
-	if (!background.is_valid()) return false;
-	numbers = SDL_CreateTextureFromFile(renderer, "images/numbers.bmp");
-	if (!numbers.is_valid()) return false;
+	background.reset(
+		SDL_CreateTextureFromFile(renderer.get(), "images/background.bmp")
+	);
+	if (!background) {
+		return false;
+	}
+	numbers.reset(
+		SDL_CreateTextureFromFile(renderer.get(), "images/numbers.bmp")
+	);
+	if (!numbers) {
+		return false;
+	}
 	return true;
 }
 
-bool clsPong::update() {
+bool clsPong::update()
+{
 	// game events
 	events.update();
-	if (events.close_button() || events.key_pressed(SDL_SCANCODE_ESCAPE)) return false;
+	if (events.close_button() || events.key_pressed(SDL_SCANCODE_ESCAPE)) {
+		return false;
+	}
 	update_paddles();
-	if (started) update_ball();
+	if (started) {
+		update_ball();
+	}
 
 	// rendering
-	SDL_RenderCopy(renderer, background, 0, 0);
+	auto target = renderer.get();
+	SDL_RenderCopy(target, background.get(), 0, 0);
 	render_value(wins, 3, TEXT_RECT_WINS);
 	render_value(losses, 3, TEXT_RECT_LOSSES);
-	player1.render(renderer, PLAYER1_COLOR);
-	player2.render(renderer, PLAYER2_COLOR);
-	if (started) ball.render(renderer, BALL_COLOR);
-	SDL_RenderPresent(renderer);
+	player1.render(target, PLAYER1_COLOR);
+	player2.render(target, PLAYER2_COLOR);
+	if (started) {
+		ball.render(target, BALL_COLOR);
+	}
+	SDL_RenderPresent(target);
 	return true;
 }
 
@@ -98,11 +122,23 @@ void clsPong::update_ball() {
 	if (ball.collision(player2)) ball.bounce_from_paddle(player2);
 }
 
-void clsPong::render_value(unsigned int const value, unsigned int const total_digits, SDL_Rect const& rect, unsigned int const x_separation) {
+void clsPong::render_value(
+	unsigned int const value, unsigned int const total_digits, 
+	SDL_Rect const& rect, unsigned int const x_separation
+) 
+{
 	SDL_Rect source = { 0, 0, rect.w, rect.h };
 	SDL_Rect dest = rect;
-	for (unsigned int digit = 0; digit < total_digits; digit++, dest.x += dest.w) {
-		source.x = ((value / (int)pow(10, total_digits - (digit + 1))) % 10) * (source.w + x_separation);
-		SDL_RenderCopy(renderer, numbers, &source, &dest);
+	auto target = renderer.get();
+	auto image = numbers.get();
+	int place;
+	for (
+		unsigned int digit = 0; 
+		digit < total_digits; 
+		digit++, dest.x += dest.w
+		) {
+		place = static_cast<int>(pow(10, total_digits - (digit + 1)));
+		source.x = ((value / place) % 10) * (source.w + x_separation);
+		SDL_RenderCopy(target, image, &source, &dest);
 	}
 }

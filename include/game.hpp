@@ -57,9 +57,9 @@ private:
 	unsigned int const RENDERER_FLAGS = SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC;
 	unsigned int const SCORE_LIMIT = 999;
 	unsigned char const TOTAL_SCORE_DIGITS = 3;
-	clsWindow window;
-	clsRenderer renderer;
-	clsTexture background, numbers;
+	sdl2::unique_window window;
+	sdl2::unique_renderer renderer;
+	sdl2::unique_texture background, numbers;
 	clsEvents events;
 	clsPaddle player1, player2;
 	clsBall ball;
